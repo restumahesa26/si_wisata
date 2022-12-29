@@ -7,7 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ProfileController extends Controller
 {
@@ -44,13 +46,30 @@ class ProfileController extends Controller
             ]);
         }
 
+        if ($request->avatar) {
+            $request->validate([
+                'avatar' => ['required', 'image', 'mimes:png,jpg,jpeg'],
+            ]);
+        }
+
         // memanggil data user berdasarkan id user yang sedang login
         $item = User::where('id', Auth::user()->id)->first();
+
+        if ($request->file('avatar')) {
+            $extension = $request->file('avatar')->extension();
+            $imageNames = uniqid('img_', microtime()) . '.' . $extension;
+            Storage::putFileAs('public/images/avatar', $request->file('avatar'), $imageNames);
+            $thumbnailpath = public_path('storage/images/avatar/' . $imageNames);
+            Image::make($thumbnailpath)->resize(400, 400)->save($thumbnailpath);
+        }else {
+            $imageNames = $item->avatar;
+        }
 
         // lakukan update data satu persatu
         $item->nama = $request->nama;
         $item->username = $request->username;
         $item->email = $request->email;
+        $item->avatar = $imageNames;
         if ($request->password) {
             $item->password = Hash::make($request->password);
         }

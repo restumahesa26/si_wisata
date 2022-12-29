@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Edit Profile</h4>
-                <form class="forms-sample" action="{{ route('profile.update') }}" method="POST">
+                <form class="forms-sample" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
@@ -26,17 +26,6 @@
                             </span>
                         @enderror
                     </div>
-                    @if (Auth::user()->role == 'Guru')
-                    <div class="form-group">
-                        <label for="nip">NIP</label>
-                        <input type="text" name="nip" class="form-control @error('nip') is-invalid @enderror" id="nip" placeholder="Masukkan NIP" value="{{ old('nip', $item->guru->nip) }}" required>
-                        @error('nip')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    @endif
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" id="username" placeholder="Masukkan Username" value="{{ old('username', $item->username) }}" required>
@@ -50,6 +39,15 @@
                         <label for="email">Email</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Masukkan Email" value="{{ old('email', $item->email) }}" required>
                         @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="avatar">Foto Profil</label>
+                        <input type="file" name="avatar" class="form-control @error('avatar') is-invalid @enderror" id="avatar" placeholder="Masukkan Foto Profil" value="{{ old('avatar', $item->avatar) }}" required>
+                        @error('avatar')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
